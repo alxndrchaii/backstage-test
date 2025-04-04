@@ -41,7 +41,7 @@ spec:
       name: Write values.yaml
       action: template:file
       input:
-        path: ./values.yaml.hbs
+        path: ./templates/values.yaml.hbs
         outputPath: app/${{ parameters.env }}/stg-${{ parameters.tribe }}/${{ parameters.serviceName | upper }}/values.yaml
         values:
           serviceName: ${{ parameters.serviceName }}
