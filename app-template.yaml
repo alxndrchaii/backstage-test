@@ -2,10 +2,11 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: app-manifest
+  namespace: user
   title: Create App Manifest
   description: Scaffold a new app manifest folder
 spec:
-  owner: user:guest
+  owner: guest
   type: service
 
   parameters:
