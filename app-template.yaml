@@ -41,7 +41,7 @@ spec:
 
     - id: write-file
       name: Write values.yaml
-      action: template:file
+      action: fetch:template:file
       input:
         path: ./templates/values.yaml.hbs
         outputPath: app/${{ parameters.env }}/stg-${{ parameters.tribe }}/${{ parameters.serviceName | upper }}/values.yaml
