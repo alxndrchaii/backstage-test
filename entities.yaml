@@ -1,0 +1,132 @@
+---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: tools
+spec:
+  owner: team-devops
+# ---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+# apiVersion: backstage.io/v1alpha1
+# kind: Component
+# metadata:
+#   name: example-website
+# spec:
+#   type: website
+#   lifecycle: experimental
+#   owner: guests
+#   system: examples
+#   providesApis: [example-grpc-api]
+# ---
+# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+# apiVersion: backstage.io/v1alpha1
+# kind: API
+# metadata:
+#   name: example-grpc-api
+# spec:
+#   type: grpc
+#   lifecycle: experimental
+#   owner: guests
+#   system: examples
+#   definition: |
+#     syntax = "proto3";
+
+#     service Exampler {
+#       rpc Example (ExampleMessage) returns (ExampleMessage) {};
+#     }
+
+#     message ExampleMessage {
+#       string example = 1;
+#     };
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: consul
+  description: Consul Service.
+  annotations:
+    backstage.io/techdocs-ref: url:https://github.com/hashicorp/consul
+  links:
+    - url: https://consul.dev.kepo.red/ui/ajaib-dc/services
+      title: Consul Service UI
+      icon: web
+  tags:
+    - consul
+    - service-mesh
+    - backend
+spec:
+  type: service
+  lifecycle: production
+  owner: team-devops
+  system: tools
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: jenkins
+  description: Jenkins Service.
+  annotations:
+    backstage.io/techdocs-ref: url:https://github.com/jenkinsci/jenkins
+  links:
+    - url: https://jenkins.stg.kepo.red
+      title: Jenkins Service Staging
+      icon: web
+    - url: https://jenkins.prd.kepo.red
+      title: Jenkins Service Production
+      icon: web
+  tags:
+    - jenkins
+    - ci
+    - cd
+spec:
+  type: service
+  lifecycle: staging
+  owner: team-devops
+  system: tools
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: akhq
+  description: Kafka GUI for Apache Kafka to manage topics, topics data, consumers group, schema registry, connect and more.
+  annotations:
+    backstage.io/techdocs-ref: url:https://github.com/tchiotludo/akhq
+  links:
+    - url: https://akhq.prd.kepo.red/ui/login
+      title: AKHQ Service Production
+      icon: web
+    - url: https://akhq.stg.kepo.red/ui/login
+      title: AKHQ Service Staging
+      icon: web
+  tags:
+    - kafka
+spec:
+  type: service
+  lifecycle: production
+  owner: team-devops
+  system: tools
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: argocd
+  description: ArgoCD Service for applications
+  annotations:
+    backstage.io/techdocs-ref: url:https://github.com/argoproj/argo-cd
+  links:
+    - url: https://argocd.prd.kepo.red/
+      title: ArgoCD Service Production
+      icon: web
+    - url: https://argocd.stg.kepo.red/
+      title: ArgoCD Service Staging
+      icon: web
+  tags:
+    - argocd
+    - cd
+    - deployment
+spec:
+  type: service
+  lifecycle: staging
+  owner: team-devops
+  system: tools
