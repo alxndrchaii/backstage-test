@@ -1,0 +1,49 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: app-manifest
+  title: Create New App Manifest
+  description: Scaffold a new application manifest folder
+spec:
+  owner: team-devops
+  type: service
+
+  parameters:
+    - title: App Info
+      required: ['serviceName', 'env']
+      properties:
+        serviceName:
+          type: string
+          title: Service Name
+        env:
+          type: string
+          title: Environment
+          enum:
+            - prd-alpaca
+            - stg-buffalo
+
+  steps:
+    - id: fetch-base
+      name: Clone base repo
+      action: fetch:plain
+      input:
+        url: https://github.com/ajaib/app-manifest
+
+    - id: create-files
+      name: Write values.yaml
+      action: template:file
+      input:
+        path: ./templates/values.yaml.hbs
+        outputPath: app/production/${{ parameters.env }}/${{ parameters.serviceName }}/values.yaml
+        values:
+          serviceName: ${{ parameters.serviceName }}
+
+    - id: pr
+      name: Open Pull Request
+      action: publish:github
+      input:
+        repoUrl: github.com?repo=app-manifest&owner=ajaib
+        branchName: add-${{ parameters.serviceName }}
+        title: "Add new app manifest: ${{ parameters.serviceName }}"
+        description: "Generated via Backstage scaffolder"
+        sourcePath: .
