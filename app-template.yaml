@@ -34,6 +34,7 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
+        cookiecutterCompat: true
         targetPath: .
         values:
           serviceName: ${{ parameters.serviceName }}
