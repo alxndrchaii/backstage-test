@@ -2,6 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: app-manifest
+  namespace: test
   title: Create App Manifest
   description: Scaffold a new app manifest folder
 spec:
