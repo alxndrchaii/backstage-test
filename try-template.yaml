@@ -57,6 +57,7 @@ spec:
       name: Generate DPL Patch YAML
       action: custom:create-github-folder
       input:
+        githubToken: ${{ parameters.githubToken }}
         environment: ${{ parameters.environment }}
         tribe: ${{ parameters.tribe }}
         component: ${{ parameters.component }}
