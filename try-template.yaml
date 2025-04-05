@@ -6,9 +6,9 @@ metadata:
   description: Creates a deployment patch YAML file with resource values
 
 spec:
-  owner: devops
+  owner: guest
   type: service
-
+  
   parameters:
     - title: Choose your environment and tribe
       required:
