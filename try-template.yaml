@@ -28,7 +28,7 @@ spec:
           title: Branch
           description: Optional branch name (defaults to main)
           default: main
-        githubToken::
+        githubToken:
           type: string
           title: githubToken
           description: Optional token (defaults to null)
