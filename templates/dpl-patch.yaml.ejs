@@ -16,19 +16,19 @@ spec:
       containers:
         - name: dpl
           envFrom:
-          - configMapRef:
-              name: java-options
-          - secretRef:
-              name: secret-env
+            - configMapRef:
+                name: java-options
+            - secretRef:
+                name: secret-env
           volumeMounts:
-          - name: application-properties-volume
-            mountPath: /config/application.properties
-            subPath: application.properties
-          - name: logback-spring-volume
-            mountPath: /config/logback-spring.xml
-            subPath: logback-spring.xml
-          - name: secret-properties-volume
-            mountPath: /secret
+            - name: application-properties-volume
+              mountPath: /config/application.properties
+              subPath: application.properties
+            - name: logback-spring-volume
+              mountPath: /config/logback-spring.xml
+              subPath: logback-spring.xml
+            - name: secret-properties-volume
+              mountPath: /secret
           startupProbe:
             httpGet:
               path: /api/application/health
@@ -41,17 +41,17 @@ spec:
               containerPort: 11111
           resources:
             requests:
-              cpu: "<%= cpuRequest %>"
-              memory: "<%= memoryRequest %>"
+              cpu: "<%= resources.cpu %>"
+              memory: "<%= resources.memory %>"
             limits:
-              memory: "<%= memoryLimit %>"
+              memory: "<%= resources.memory %>"
       volumes:
-      - name: application-properties-volume
-        configMap:
-          name: application-properties
-      - name: logback-spring-volume
-        configMap:
-          name: logback-spring
-      - name: secret-properties-volume
-        secret:
-          secretName: secret-properties #pragma: allowlist secret
+        - name: application-properties-volume
+          configMap:
+            name: application-properties
+        - name: logback-spring-volume
+          configMap:
+            name: logback-spring
+        - name: secret-properties-volume
+          secret:
+            secretName: secret-properties #pragma: allowlist secret
