@@ -71,9 +71,12 @@ spec:
       input:
         repoUrl: github.com?repo=backstage-test&owner=alxndrchaii
         branch: main
-        targetPath: app  # only publish the generated folder under "app/"
+        targetPath: ./  # this publishes the whole generated structure
         commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
         token: ${{ parameters.githubToken }}
+        # 👇 This tells it to publish to an existing repo, not create a new one
+        existing: true
+
 
   output:
     links:
