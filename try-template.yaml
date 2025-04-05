@@ -5,7 +5,7 @@ metadata:
   title: Create a Folder in GitHub Repo (via PR)
   description: This template adds a new folder to an existing GitHub repo using a pull request.
 spec:
-  owner: platform-team
+  owner: guest
   type: service
 
   parameters:
