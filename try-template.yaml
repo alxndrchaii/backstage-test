@@ -5,7 +5,7 @@ metadata:
   title: Create DPL Patch Manifest
   description: Scaffold a patch deployment manifest for dpl
 spec:
-  owner: infra
+  owner: guest
   type: service
 
   parameters:
