@@ -1,0 +1,54 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: create-folder-in-repo
+  title: Create a Folder in GitHub Repo (via PR)
+  description: This template adds a new folder to an existing GitHub repo using a pull request.
+spec:
+  owner: platform-team
+  type: service
+
+  parameters:
+    - title: Folder Information
+      required:
+        - repoUrl
+        - path
+        - folderName
+      properties:
+        repoUrl:
+          title: Target GitHub repository (e.g. github.com/your-org/app-manifest)
+          type: string
+        path:
+          title: Path inside the repo where the folder should be created (e.g. app/production/prd-alpaca)
+          type: string
+        folderName:
+          title: Name of the new folder to create
+          type: string
+
+  steps:
+    - id: fetch-template
+      name: Prepare Folder Contents
+      action: fetch:template
+      input:
+        url: ./templates
+        targetPath: ./workspace
+        values:
+          folderName: ${{ parameters.folderName }}
+
+    - id: publish-to-github
+      name: Open a PR
+      action: publish:github
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        branchName: add-${{ parameters.folderName }}-folder
+        filePath: ${{ parameters.path }}/${{ parameters.folderName }}
+        commitMessage: "chore: add ${{ parameters.folderName }} folder"
+        title: "Add new folder ${{ parameters.folderName }} under ${{ parameters.path }}"
+        description: |
+          This PR was automatically generated via Backstage scaffolder.
+          It adds a new folder named `${{ parameters.folderName }}` under `${{ parameters.path }}`.
+
+  output:
+    links:
+      - title: View Pull Request
+        url: ${{ steps.publish-to-github.output.remoteUrl }}
