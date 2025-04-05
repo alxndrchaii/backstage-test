@@ -59,4 +59,5 @@ spec:
 
   output:
     text:
-      - "✅ Patch created at app/${{ parameters.env }}/${{ parameters.tribe }}/${{ parameters.component }}/patch/dpl-patch.yaml"
+      - title: Success!
+        content: "The patch file for ${{ parameters.component }} has been created."
