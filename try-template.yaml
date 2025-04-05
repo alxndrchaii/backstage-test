@@ -72,6 +72,7 @@ spec:
         branch: main
         targetPath: app  # only publish the generated folder under "app/"
         commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
+        token: ${{ parameters.githubToken }}
 
   output:
     links:
