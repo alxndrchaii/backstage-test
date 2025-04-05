@@ -6,7 +6,7 @@ metadata:
   description: Creates a new folder (with a .keep file) inside a GitHub repo
 
 spec:
-  owner: platform-team
+  owner: guest
   type: service
 
   parameters:
