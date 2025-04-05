@@ -28,6 +28,11 @@ spec:
           title: Branch
           description: Optional branch name (defaults to main)
           default: main
+        githubToken::
+          type: string
+          title: githubToken
+          description: Optional token (defaults to null)
+          default: null
 
   steps:
     - id: create-folder
@@ -37,7 +42,7 @@ spec:
         repoUrl: ${{ parameters.repoUrl }}
         folderPath: ${{ parameters.folderPath }}
         branch: ${{ parameters.branch }}
-        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        githubToken: ${{ parameters.githubToken }}
 
   output:
     links:
