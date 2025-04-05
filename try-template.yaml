@@ -1,50 +1,62 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: create-github-folder
-  title: Create Folder in GitHub Repo
-  description: Creates a new folder (with a .keep file) inside a GitHub repo
-
+  name: create-dpl-patch
+  title: Create DPL Patch Manifest
+  description: Scaffold a patch deployment manifest for dpl
 spec:
-  owner: guest
+  owner: infra
   type: service
 
   parameters:
-    - title: GitHub Repo Info
-      required:
-        - repoUrl
-        - folderPath
+    - title: Patch Info
+      required: ['env', 'tribe', 'component', 'cpuRequest', 'memoryRequest', 'memoryLimit']
       properties:
-        repoUrl:
+        env:
           type: string
-          title: GitHub Repo (owner/repo)
-          description: The full repo, e.g. `ajaib/my-repo`
-        folderPath:
+          title: Environment
+          enum: ['production', 'staging']
+        tribe:
           type: string
-          title: Folder Path
-          description: Path to the folder you want to create (e.g. `app/configs`)
-        branch:
+          title: Tribe
+          enum: ['prd-alpaca', 'prd-coin']
+        component:
           type: string
-          title: Branch
-          description: Optional branch name (defaults to main)
-          default: main
+          title: Component Name
+          description: e.g., FOREIGN-STOCK-DATA
+        cpuRequest:
+          type: string
+          title: CPU Request
+          default: "2"
+        memoryRequest:
+          type: string
+          title: Memory Request
+          default: "4Gi"
+        memoryLimit:
+          type: string
+          title: Memory Limit
+          default: "4Gi"
         githubToken:
           type: string
-          title: githubToken
-          description: Optional token (defaults to null)
-          default: ghp__
+          title: define your Github Token
+          default: GHP__
 
   steps:
-    - id: create-folder
-      name: Create GitHub Folder
+    - id: create-patch
+      name: Create DPL Patch File
       action: custom:create-github-folder
       input:
-        repoUrl: ${{ parameters.repoUrl }}
-        folderPath: ${{ parameters.folderPath }}
-        branch: ${{ parameters.branch }}
-        githubToken: ${{ parameters.githubToken }}
+        repoUrl: github.com?repo=app-manifest&owner=ajaib
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        environment: ${{ parameters.env }}
+        tribe: ${{ parameters.tribe }}
+        componentName: ${{ parameters.component }}
+        cpuRequest: ${{ parameters.cpuRequest }}
+        memoryRequest: ${{ parameters.memoryRequest }}
+        memoryLimit: ${{ parameters.memoryLimit }}
+        templatePath: ./templates/dpl-patch.yaml.ejs
+        outputFile: dpl-patch.yaml
 
   output:
-    links:
-      - title: View Repo
-        url: https://github.com/${{ parameters.repoUrl }}/tree/${{ parameters.branch }}/${{ parameters.folderPath }}
+    text:
+      - "✅ Patch created at app/${{ parameters.env }}/${{ parameters.tribe }}/${{ parameters.component }}/patch/dpl-patch.yaml"
