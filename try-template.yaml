@@ -8,7 +8,7 @@ metadata:
 spec:
   owner: guest
   type: service
-  
+
   parameters:
     - title: Choose your environment and tribe
       required:
@@ -63,6 +63,15 @@ spec:
         resources:
           cpu: ${{ parameters.cpu }}
           memory: ${{ parameters.memory }}
+
+    - id: publish-to-github
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        repoUrl: github.com?repo=backstage-test&owner=alxndrchaii
+        branch: main
+        targetPath: app  # only publish the generated folder under "app/"
+        commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
 
   output:
     links:
