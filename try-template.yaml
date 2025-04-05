@@ -65,7 +65,7 @@ spec:
           cpu: ${{ parameters.cpu }}
           memory: ${{ parameters.memory }}
 
-    - id: publish-to-github
+    - id: pr-to-github
       name: Publish to GitHub as PR
       action: publish:github:pull-request
       input:
