@@ -32,7 +32,7 @@ spec:
           type: string
           title: githubToken
           description: Optional token (defaults to null)
-          default: null
+          default: ghp__
 
   steps:
     - id: create-folder
