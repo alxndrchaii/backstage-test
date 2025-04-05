@@ -47,7 +47,7 @@ spec:
       action: custom:create-github-folder
       input:
         repoUrl: github.com?repo=app-manifest&owner=ajaib
-        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        githubToken: ${{ parameters.githubToken }}
         environment: ${{ parameters.env }}
         tribe: ${{ parameters.tribe }}
         componentName: ${{ parameters.component }}
