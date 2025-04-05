@@ -2,62 +2,69 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: create-dpl-patch
-  title: Create DPL Patch Manifest
-  description: Scaffold a patch deployment manifest for dpl
+  title: Create DPL Patch YAML
+  description: Creates a deployment patch YAML file with resource values
+
 spec:
-  owner: guest
+  owner: devops
   type: service
 
   parameters:
-    - title: Patch Info
-      required: ['env', 'tribe', 'component', 'cpuRequest', 'memoryRequest', 'memoryLimit']
+    - title: Choose your environment and tribe
+      required:
+        - environment
+        - tribe
+        - component
+        - cpu
+        - memory
+        - githubToken
       properties:
-        env:
+        environment:
           type: string
           title: Environment
-          enum: ['production', 'staging']
+          enum:
+            - production
+            - staging
+
         tribe:
           type: string
           title: Tribe
-          enum: ['prd-alpaca', 'prd-coin']
+          enum:
+            - prd-alpaca
+            - prd-coin
+
         component:
           type: string
-          title: Component Name
-          description: e.g., FOREIGN-STOCK-DATA
-        cpuRequest:
+          title: Component name (e.g., FOREIGN-STOCK-DATA)
+
+        cpu:
           type: string
-          title: CPU Request
+          title: CPU request
           default: "2"
-        memoryRequest:
+
+        memory:
           type: string
-          title: Memory Request
+          title: Memory request/limit
           default: "4Gi"
-        memoryLimit:
-          type: string
-          title: Memory Limit
-          default: "4Gi"
+
         githubToken:
           type: string
-          title: define your Github Token
-          default: GHP__
+          title: Define your githubToken
+          default: GHP_
 
   steps:
-    - id: create-patch
-      name: Create DPL Patch File
+    - id: generate-patch
+      name: Generate DPL Patch YAML
       action: custom:create-github-folder
       input:
-        repoUrl: github.com?repo=app-manifest&owner=ajaib
-        githubToken: ${{ parameters.githubToken }}
-        environment: ${{ parameters.env }}
+        environment: ${{ parameters.environment }}
         tribe: ${{ parameters.tribe }}
-        componentName: ${{ parameters.component }}
-        cpuRequest: ${{ parameters.cpuRequest }}
-        memoryRequest: ${{ parameters.memoryRequest }}
-        memoryLimit: ${{ parameters.memoryLimit }}
-        templatePath: ./templates/dpl-patch.yaml.ejs
-        outputFile: dpl-patch.yaml
+        component: ${{ parameters.component }}
+        resources:
+          cpu: ${{ parameters.cpu }}
+          memory: ${{ parameters.memory }}
 
   output:
-    text:
-      - title: Success!
-        content: "The patch file for ${{ parameters.component }} has been created."
+    links:
+      - title: Open in GitHub
+        url: https://github.com/ajaib/app-manifest # adjust if needed
