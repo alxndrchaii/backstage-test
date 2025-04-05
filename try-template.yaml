@@ -66,17 +66,17 @@ spec:
           memory: ${{ parameters.memory }}
 
     - id: publish-to-github
-      name: Publish to GitHub
-      action: publish:github
+      name: Publish to GitHub as PR
+      action: publish:github:pull-request
       input:
         repoUrl: github.com?repo=backstage-test&owner=alxndrchaii
         branch: main
-        targetPath: ./  # this publishes the whole generated structure
-        commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
+        title: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
+        description: "This PR adds a new dpl-patch.yaml manifest under app/${{ parameters.environment }}/${{ parameters.tribe }}/${{ parameters.component }}/patch"
+        targetPath: ./  # or 'app' if you only want to push the 'app' folder
         token: ${{ parameters.githubToken }}
-        # 👇 This tells it to publish to an existing repo, not create a new one
-        existing: true
-
+        # optional: name the PR branch
+        branchName: "auto/dpl-patch-${{ parameters.component }}"
 
   output:
     links:
