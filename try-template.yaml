@@ -1,54 +1,45 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: create-folder-in-repo
-  title: Create a Folder in GitHub Repo (via PR)
-  description: This template adds a new folder to an existing GitHub repo using a pull request.
+  name: create-github-folder
+  title: Create Folder in GitHub Repo
+  description: Creates a new folder (with a .keep file) inside a GitHub repo
+
 spec:
-  owner: guest
+  owner: platform-team
   type: service
 
   parameters:
-    - title: Folder Information
+    - title: GitHub Repo Info
       required:
         - repoUrl
-        - path
-        - folderName
+        - folderPath
       properties:
         repoUrl:
-          title: Target GitHub repository (e.g. github.com/your-org/app-manifest)
           type: string
-        path:
-          title: Path inside the repo where the folder should be created (e.g. app/production/prd-alpaca)
+          title: GitHub Repo (owner/repo)
+          description: The full repo, e.g. `ajaib/my-repo`
+        folderPath:
           type: string
-        folderName:
-          title: Name of the new folder to create
+          title: Folder Path
+          description: Path to the folder you want to create (e.g. `app/configs`)
+        branch:
           type: string
+          title: Branch
+          description: Optional branch name (defaults to main)
+          default: main
 
   steps:
-    - id: fetch-template
-      name: Prepare Folder Contents
-      action: fetch:template
-      input:
-        url: ./templates
-        targetPath: ./workspace
-        values:
-          folderName: ${{ parameters.folderName }}
-
-    - id: publish-to-github
-      name: Open a PR
-      action: publish:github
+    - id: create-folder
+      name: Create GitHub Folder
+      action: custom:create-github-folder
       input:
         repoUrl: ${{ parameters.repoUrl }}
-        branchName: add-${{ parameters.folderName }}-folder
-        filePath: ${{ parameters.path }}/${{ parameters.folderName }}
-        commitMessage: "chore: add ${{ parameters.folderName }} folder"
-        title: "Add new folder ${{ parameters.folderName }} under ${{ parameters.path }}"
-        description: |
-          This PR was automatically generated via Backstage scaffolder.
-          It adds a new folder named `${{ parameters.folderName }}` under `${{ parameters.path }}`.
+        folderPath: ${{ parameters.folderPath }}
+        branch: ${{ parameters.branch }}
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
 
   output:
     links:
-      - title: View Pull Request
-        url: ${{ steps.publish-to-github.output.remoteUrl }}
+      - title: View Repo
+        url: https://github.com/${{ parameters.repoUrl }}/tree/${{ parameters.branch }}/${{ parameters.folderPath }}
