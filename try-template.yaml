@@ -108,7 +108,7 @@ spec:
         update: true
       if: "{{ not parameters.previewOnly }}"
 
-  output:
+  outputs:
     links:
       - title: Open in GitHub
         url: https://github.com/ajaib/app-manifest # adjust if needed
