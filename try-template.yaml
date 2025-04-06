@@ -52,11 +52,6 @@ spec:
           title: Define your githubToken
           default: GHP_
 
-        previewOnly:
-          type: boolean
-          title: Preview files only?
-          default: true
-
     - title: Open a PR
       properties:
         prTitle:
@@ -80,26 +75,6 @@ spec:
         resources:
           cpu: ${{ parameters.cpu }}
           memory: ${{ parameters.memory }}
-
-    - id: generate-preview
-      name: Generate manifest preview
-      action: custom:generate-preview-only
-      input:
-        files:
-          app/production/prd-coin/COIN-EXCHANGE/kustomization.yaml: |
-            <%= renderKustomizationYaml(environment, tribe, component) %>
-          app/production/prd-coin/COIN-EXCHANGE/patch/dpl-patch.yaml: |
-            <%= renderDplPatch(component) %>
-          app/production/prd-coin/COIN-EXCHANGE/patch/haproxy-patch.yaml: |
-            ...
-      if: "{{ parameters.previewOnly }}"
-      output:
-        preview:
-          title: Files to be reviewed
-          description: Preview of the generated files
-          type: string
-          copyable: true
-          readOnly: true
 
     - id: publish-to-github
       name: Publish to GitHub PR
