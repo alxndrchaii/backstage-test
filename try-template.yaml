@@ -93,6 +93,13 @@ spec:
           app/production/prd-coin/COIN-EXCHANGE/patch/haproxy-patch.yaml: |
             ...
       if: "{{ parameters.previewOnly }}"
+      output:
+        preview:
+          title: Files to be reviewed
+          description: Preview of the generated files
+          type: string
+          copyable: true
+          readOnly: true
 
     - id: publish-to-github
       name: Publish to GitHub PR
@@ -112,9 +119,3 @@ spec:
     links:
       - title: Open in GitHub
         url: https://github.com/ajaib/app-manifest # adjust if needed
-    preview:
-      title: Files to be reviewed
-      description: Preview of the generated files
-      type: string
-      copyable: true
-      readOnly: true
