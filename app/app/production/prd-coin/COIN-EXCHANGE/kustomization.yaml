@@ -1,0 +1,1 @@
+<%= renderKustomizationYaml(environment, tribe, component) %>
