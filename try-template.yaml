@@ -88,9 +88,8 @@ spec:
         commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
         token: ${{ parameters.githubToken }}
         update: true
-      if: "{{ not parameters.previewOnly }}"
 
   output:
     links:
-      - title: Open in GitHub
-        url: https://github.com/ajaib/app-manifest # adjust if needed
+      - title: Pull Request Links
+        url: ${{ steps['publish-to-github'].output.remoteUrl }}
