@@ -52,6 +52,17 @@ spec:
           title: Define your githubToken
           default: GHP_
 
+    - title: Open a PR
+      properties:
+        prTitle:
+          type: string
+          title: Pull Request Title
+          default: "chore: scaffold dpl patch"
+        prDescription:
+          type: string
+          title: Pull Request Description
+          default: "Auto-generated patch manifest via Backstage template."
+
   steps:
     - id: generate-patch
       name: Generate DPL Patch YAML
@@ -65,19 +76,17 @@ spec:
           cpu: ${{ parameters.cpu }}
           memory: ${{ parameters.memory }}
 
-    - id: pr-to-github
-      name: Publish to GitHub as PR
+    - id: publish-to-github
+      name: Publish to GitHub PR
       action: publish:github:pull-request
       input:
         repoUrl: github.com?repo=backstage-test&owner=alxndrchaii
-        branch: main
-        title: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
-        description: "This PR adds a new dpl-patch.yaml manifest under app/${{ parameters.environment }}/${{ parameters.tribe }}/${{ parameters.component }}/patch"
-        targetPath: ./  # or 'app' if you only want to push the 'app' folder
+        branchName: scaffold/${{ parameters.component }}-${{ parameters.environment }}
+        title: ${{ parameters.prTitle }}
+        description: ${{ parameters.prDescription }}
+        targetPath: app
+        commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
         token: ${{ parameters.githubToken }}
-        # optional: name the PR branch
-        update: true
-        branchName: "auto/dpl-patch-${{ parameters.component }}"
 
   output:
     links:
