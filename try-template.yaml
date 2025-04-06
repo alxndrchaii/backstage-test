@@ -56,7 +56,7 @@ spec:
           type: boolean
           title: Preview files only?
           default: true
-          
+
     - title: Open a PR
       properties:
         prTitle:
@@ -112,3 +112,9 @@ spec:
     links:
       - title: Open in GitHub
         url: https://github.com/ajaib/app-manifest # adjust if needed
+    preview:
+      title: Files to be reviewed
+      description: Preview of the generated files
+      type: string
+      copyable: true
+      readOnly: true
