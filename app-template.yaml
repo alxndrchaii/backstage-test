@@ -43,6 +43,8 @@ spec:
       name: Write values.yaml
       action: fetch:template:file
       input:
+        url:
+        targetPath:
         path: ./templates/values.yaml.hbs
         outputPath: app/${{ parameters.env }}/stg-${{ parameters.tribe }}/${{ parameters.serviceName | upper }}/values.yaml
         values:
