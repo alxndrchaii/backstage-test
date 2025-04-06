@@ -76,6 +76,7 @@ spec:
         targetPath: ./  # or 'app' if you only want to push the 'app' folder
         token: ${{ parameters.githubToken }}
         # optional: name the PR branch
+        update: true
         branchName: "auto/dpl-patch-${{ parameters.component }}"
 
   output:
