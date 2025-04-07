@@ -146,5 +146,9 @@ spec:
 
   output:
     links:
-      - title: Pull Request Links
+      - title: Pull Request to Argocd
+        url: ${{ steps['register-argocd-app'].output.prUrl }}
+      - title: Pull Request to Jenkins
+        url: ${{ steps['register-jenkins'].output.prUrl }}
+      - title: Pull Request to app-manifest
         url: ${{ steps['publish-to-github'].output.remoteUrl }}
