@@ -114,6 +114,15 @@ spec:
         autoDeploy: false
         disableSonarqubeStage: ${{ parameters.disableSonarqubeStage }}
 
+    - id: register-argocd-app
+      name: Register ArgoCD App
+      action: custom:register-argocd-app
+      input:
+        component: ${{ parameters.component }}
+        tribe: ${{ parameters.tribe }}
+        clusterName: ${{ parameters.clusterName }}
+        githubToken: ${{ parameters.githubToken }}
+
     - id: validation
       name: Check if folder exists in GitHub
       action: custom:validate-folder-not-exists
