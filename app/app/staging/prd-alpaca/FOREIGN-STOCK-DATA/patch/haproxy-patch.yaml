@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl
+spec:
+  template:
+    spec:
+      containers:
+        - name: haproxy
+          image: asia-southeast2-docker.pkg.dev/ajaib-nprd-shared-services-0/base-image/haproxy-lts-alpine
+          resources:
+            requests:
+              cpu: "0.3"
+              memory: "128Mi"
+          startupProbe:
+            exec:
+              command:
+                - pgrep
+                - haproxy
+            failureThreshold: 30
+            periodSeconds: 10
+          volumeMounts:
+          - name: haproxy-volume
+            mountPath: /usr/local/etc/haproxy/
+          securityContext:
+            runAsUser: 1000
+      volumes:
+      - name: haproxy-volume
+        secret:
+          secretName: haproxy-config #pragma: allowlist secret
