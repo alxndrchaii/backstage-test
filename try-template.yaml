@@ -1,9 +1,9 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: create-dpl-patch
-  title: Create DPL Patch YAML
-  description: Creates a deployment patch YAML file with resource values
+  name: create-java-service
+  title: Create a Java service
+  description: Creates a deployment for Java applications
 
 spec:
   owner: guest
@@ -18,6 +18,8 @@ spec:
         - cpu
         - memory
         - githubToken
+        - ramInitialPercentage
+        - ramMaxPercentage
       properties:
         environment:
           type: string
@@ -47,10 +49,31 @@ spec:
           title: Memory request/limit
           default: "4Gi"
 
+        ramInitialPercentage:
+          type: string
+          title: define InitialRAMPercentage
+          default: "70%"
+
+        ramMaxPercentage:
+          type: string
+          title: define MaxRAMPercentage
+          default: "70%"
+
         githubToken:
           type: string
           title: Define your githubToken
           default: GHP_
+
+    - title: Register Jenkins job
+      properties:
+        dockerfilePath:
+          type: string
+          title: Define a dockerfilePath in you app directory
+          default: "./Dockerfile"
+        disableSonarqubeStage:
+          type: boolean
+          title: Do you want to disable sonarqube stage?
+          default: false
 
     - title: Open a PR
       properties:
@@ -75,6 +98,29 @@ spec:
         resources:
           cpu: ${{ parameters.cpu }}
           memory: ${{ parameters.memory }}
+        ramMaxPercentage: ${{ parameters.ramMaxPercentage }}
+        ramInitialPercentage: ${{ parameters.ramInitialPercentage }}
+
+    - id: register-jenkins
+      name: Register Jenkins Job
+      action: custom:register-jenkins-job
+      input:
+        githubToken: ${{ parameters.githubToken }}
+        tribe: ${{ parameters.tribe }}
+        component: ${{ parameters.component }}
+        dockerfilePath: ${{ parameters.dockerfilePath }}
+        prJob: true
+        useK8s: true
+        autoDeploy: false
+        disableSonarqubeStage: ${{ parameters.disableSonarqubeStage }}
+
+    - id: validation
+      name: Check if folder exists in GitHub
+      action: custom:validate-folder-not-exists
+      input:
+        repoUrl: github.com/alxndrchaii/backstage-test
+        folderPath: app/app/${{ parameters.environment }}/${{ parameters.tribe }}/${{ parameters.component }}
+        githubToken: ${{ parameters.githubToken }}
 
     - id: publish-to-github
       name: Publish to GitHub PR
