@@ -1,0 +1,93 @@
+resources:
+- ../common-istio/java
+
+namePrefix: test-lagi-
+
+labels:
+  - pairs:
+      cluster_name: stg-coin-cluster-0
+      service_group: coin  
+      logging_enabled: "true"
+      prometheus_custom_metrics: "true"
+      service_type: java
+    includeTemplates: true
+  - pairs:
+      environment: staging
+      service_name: test-lagi
+      app: test-lagi
+    includeSelectors: true
+
+configMapGenerator:
+- name: java-options
+  envs:
+    - configmap/java-options.env
+- name: logback-spring
+  files:
+  - https://configmap.dev.kepo.red/staging/TEST-LAGI/logback-spring.xml
+- name: application-properties
+  files:
+  - https://configmap.dev.kepo.red/staging/TEST-LAGI/application.properties
+
+patches:
+- path: patch/dpl-patch.yaml
+- path: patch/haproxy-patch.yaml
+- path: patch/cnr-patch.yaml
+- patch: |
+    - op: add
+      path: "/metadata/annotations/external-dns.alpha.kubernetes.io~1exclude"
+      value: 'true'
+  target:
+    kind: Ingress
+
+generators:
+- secret-generator.yaml
+
+configurations:
+- name-references.yaml
+
+transformers:
+- metadata-labels.yaml
+
+replacements:
+- source:
+    kind: Deployment
+    name: dpl
+    fieldPath: metadata.labels.service_name
+  targets:
+  - select:
+      kind: Canary
+    fieldPaths:
+    - spec.service.hosts.0
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: Canary
+    fieldPaths:
+    - spec.service.name
+    options:
+      delimiter: '-'
+      index: 0
+  - select:
+      kind: Ingress
+    fieldPaths:
+    - spec.rules.0.host
+    - spec.rules.0.http.paths.0.backend.service.name
+    options:
+      delimiter: '-'
+      index: 0
+- source:
+    kind: Deployment
+    name: dpl
+    fieldPath: metadata.labels.service_group
+    options:
+      delimiter: '-'
+      index: 0
+  targets:
+  - select:
+      kind: Canary
+    fieldPaths:
+    - spec.service.gateways.0
+    options:
+      delimiter: '-'
+      index: 2

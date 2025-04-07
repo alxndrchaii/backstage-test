@@ -1,0 +1,21 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: cnr
+spec:
+  progressDeadlineSeconds: 600
+  service:
+    port: 80
+    targetPort: app-port
+    portName: app-port
+    appProtocol: http
+    trafficPolicy:
+      tls:
+        mode: ISTIO_MUTUAL
+  skipAnalysis: true
+  analysis:
+    interval: 20s
+    maxWeight: 10
+    stepWeight: 10
+    stepWeightPromotion: 100
+    threshold: 10
