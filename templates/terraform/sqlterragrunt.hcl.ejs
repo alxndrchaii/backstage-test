@@ -1,0 +1,105 @@
+include {
+    path = find_in_parent_folders()
+  }
+  
+  include "project" {
+    path   = find_in_parent_folders("project.hcl")
+    expose = true
+  }
+  
+  generate "provider" {
+    path      = "provider.tf"
+    if_exists = "overwrite_terragrunt"
+  
+    contents = <<EOF
+  provider "google" {
+    impersonate_service_account = "ajaib-prd-teams-stock-0@ajaib-prd-iac-core-0.iam.gserviceaccount.com"
+    user_project_override = true
+    billing_project = "ajaib-prd-stock"
+    version = "4.44.1"
+  }
+  provider "google-beta" {
+    impersonate_service_account = "ajaib-prd-teams-stock-0@ajaib-prd-iac-core-0.iam.gserviceaccount.com"
+    user_project_override = true
+    billing_project = "ajaib-prd-stock"
+    version = "4.44.1"
+  }
+  EOF
+  }
+  # destroy
+  include "region" {
+    path   = find_in_parent_folders("region.hcl")
+    expose = true
+  }
+  
+  include "resource" {
+    path   = find_in_parent_folders("resource.hcl")
+    expose = true
+  }
+  
+  terraform {
+    source = "github.com/ajaibid/devops-terraform-modules.git//gcp/cloudsql-instance/?ref=v2.30.4"
+  }
+  
+  inputs = {
+    project_id        = include.project.locals.project_id
+    network           = "projects/${include.resource.locals.project_subnetwork}/global/networks/${include.resource.locals.vpc_name}"
+    name              = include.resource.locals.service_name
+    region            = include.region.locals.region
+    prefix            = include.project.locals.project_id
+    database_version  = "MYSQL_8_0"
+    tier              = "db-custom-4-8192"
+    disk_type         = "PD_SSD"
+    disk_size         = 60
+    availability_type = "REGIONAL"
+    users             = { "ajaib_root" = null }
+  
+    authorized_networks = {
+      vpc-prd-alpaca-subnet-prd-sea2-alpaca = "100.69.128.0/17"
+    }
+  
+    replicas = {
+      "${include.resource.locals.service_name}-replica" = { region = "asia-southeast2", encryption_key_name = null }
+    }
+  
+    flags = {
+      cloudsql_iam_authentication = "on"
+      default_time_zone           = "+07:00"
+    }
+  
+    backup_configuration = {
+      enabled            = true
+      binary_log_enabled = false
+      start_time         = "03:00"
+      location           = "asia-southeast2"
+      log_retention_days = 7
+      retention_count    = 7
+    }
+  
+    labels = {
+      prometheus_alert  = true
+      prometheus_scrape = true
+      created_by        = "terraform"
+      environment       = include.project.locals.environment
+      host_target       = include.resource.locals.service_name
+      healthcheck_group = "none"
+      service_group     = "alpaca"
+      service_type      = "cloudsql-mysql"
+      service_name      = include.resource.locals.service_name
+      region            = include.region.locals.region
+      project_id        = include.project.locals.project_id
+    }
+  
+    insights_config = {
+      query_insights_enabled  = true
+      query_plans_per_minute  = 5
+      query_string_length     = 1024
+      record_application_tags = false
+      record_client_address   = false
+    }
+  
+    maintenance_window = {
+      day  = "3"
+      hour = "16"
+    }
+  }

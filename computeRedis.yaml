@@ -1,0 +1,105 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: create-redis-server
+  title: Create a redis server
+  description: This workflow will add redis instance
+
+spec:
+  owner: guest
+  type: service
+
+  parameters:
+    - title: Please fill in the parameters
+      required:
+        - environment
+        - tribe
+        - resourceName
+        - rootDiskSize
+        - rootDiskType
+        - instanceCount
+        - githubToken
+      properties:
+        environment:
+          type: string
+          title: Environment
+          enum:
+            - production
+            - staging
+
+        tribe:
+          type: string
+          title: Tribe
+          enum:
+            - alpaca
+            - coin
+
+        resourceName:
+          type: string
+          title: Instance name (e.g., foreign-stock-alpaca-streamer)
+
+        rootDiskSize:
+          type: number
+          title: Size of this intance disk
+          default: 15
+
+        rootDiskType:
+          type: string
+          title: rootDiskType
+          enum:
+            - pd-standard
+            - pd-balanced
+
+        instanceCount:
+          type: number
+          title: How many instance do you need?
+          default: 1
+
+        githubToken:
+          type: string
+          title: Define your githubToken
+          default: GHP_
+
+    - title: Open a PR
+      properties:
+        prTitle:
+          type: string
+          title: Pull Request Title
+          default: "chore: scaffold dpl patch"
+        prDescription:
+          type: string
+          title: Pull Request Description
+          default: "Auto-generated patch manifest via Backstage template."
+
+  steps:
+    - id: generate-patch
+      name: Doing Magic 
+      action: custom:create-github-folder
+      input:
+        githubToken: ${{ parameters.githubToken }}
+        environment: ${{ parameters.environment }}
+        tribe: ${{ parameters.tribe }}
+        component: ${{ parameters.component }}
+        resources:
+          cpu: ${{ parameters.cpu }}
+          memory: ${{ parameters.memory }}
+        ramMaxPercentage: ${{ parameters.ramMaxPercentage }}
+        ramInitialPercentage: ${{ parameters.ramInitialPercentage }}
+
+    - id: publish-to-github
+      name: Publish to GitHub PR
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?repo=backstage-test&owner=alxndrchaii
+        branchName: scaffold/${{ parameters.component }}-${{ parameters.environment }}
+        title: ${{ parameters.prTitle }}
+        description: ${{ parameters.prDescription }}
+        targetPath: app
+        commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
+        token: ${{ parameters.githubToken }}
+        update: true
+
+  output:
+    links:
+      - title: Pull Request to Terraform repo
+        url: ${{ steps['publish-to-github'].output.remoteUrl }}
