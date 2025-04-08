@@ -17,6 +17,16 @@ spec:
   children: []
 ---
 apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: alexander
+spec:
+  profile:
+    displayName: Alexander Chai
+    email: alexander.chai@ajaib.co.id
+  memberOf: [team-devops]
+---
+apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: team-devops
@@ -36,3 +46,4 @@ spec:
     - bob
     - charlie
     - guest
+    - alexander
