@@ -1,0 +1,14 @@
+# The following does not require any changes.
+# If you make any modifications, you need to understand what you are doing
+nameReference:
+- kind: Deployment
+  fieldSpecs:
+  - path: spec/targetRef/name
+    group: flagger.app
+    kind: Canary
+
+- kind: HorizontalPodAutoscaler
+  fieldSpecs:
+  - path: spec/autoscalerRef/name
+    group: flagger.app
+    kind: Canary
