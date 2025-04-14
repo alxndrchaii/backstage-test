@@ -19,6 +19,7 @@ spec:
         - rootDiskType
         - instanceCount
         - githubToken
+        - computeType
       properties:
         environment:
           type: string
@@ -33,10 +34,20 @@ spec:
           enum:
             - alpaca
             - coin
+            - stock
 
         resourceName:
           type: string
           title: Instance name (e.g., foreign-stock-alpaca-streamer)
+
+        computeType:
+          type: string
+          title: instance specs
+          enum:
+            - e2-custom-1-2048
+            - e2-custom-2-2048
+            - e2-custom-2-4096
+            - e2-custom-4-4096
 
         rootDiskSize:
           type: number
@@ -74,27 +85,26 @@ spec:
   steps:
     - id: generate-patch
       name: Doing Magic 
-      action: custom:create-github-folder
+      action: custom:create-compute-engine
       input:
         githubToken: ${{ parameters.githubToken }}
         environment: ${{ parameters.environment }}
         tribe: ${{ parameters.tribe }}
-        component: ${{ parameters.component }}
-        resources:
-          cpu: ${{ parameters.cpu }}
-          memory: ${{ parameters.memory }}
-        ramMaxPercentage: ${{ parameters.ramMaxPercentage }}
-        ramInitialPercentage: ${{ parameters.ramInitialPercentage }}
+        computeType: ${{ parameters.computeType }}
+        rootDiskSize: ${{ parameters.rootDiskSize }}
+        instanceCount: ${{ parameters.instanceCount }}
+        resourceName: ${{ parameters.resourceName }}
+        rootDiskType: ${{ parameters.rootDiskType }}
 
     - id: publish-to-github
       name: Publish to GitHub PR
       action: publish:github:pull-request
       input:
-        repoUrl: github.com?repo=backstage-test&owner=alxndrchaii
+        repoUrl: github.com?repo=infra-terraform-resources&owner=ajaibid
         branchName: scaffold/${{ parameters.component }}-${{ parameters.environment }}
         title: ${{ parameters.prTitle }}
         description: ${{ parameters.prDescription }}
-        targetPath: app
+        targetPath: ${{ parameters.environment }}
         commitMessage: "chore: create dpl-patch.yaml for ${{ parameters.component }}"
         token: ${{ parameters.githubToken }}
         update: true

@@ -32,8 +32,9 @@ spec:
           type: string
           title: Tribe
           enum:
-            - prd-alpaca
-            - prd-coin
+            - alpaca
+            - coin
+            - stock
 
         component:
           type: string
@@ -122,20 +123,21 @@ spec:
         tribe: ${{ parameters.tribe }}
         clusterName: ${{ parameters.clusterName }}
         githubToken: ${{ parameters.githubToken }}
+        environment: ${{ parameters.environment }}
 
     - id: validation
       name: Check if folder exists in GitHub
       action: custom:validate-folder-not-exists
       input:
         repoUrl: github.com/alxndrchaii/backstage-test
-        folderPath: app/app/${{ parameters.environment }}/${{ parameters.tribe }}/${{ parameters.component }}
+        folderPath: app/${{ parameters.environment }}/${{ parameters.tribe }}/${{ parameters.component }}
         githubToken: ${{ parameters.githubToken }}
 
     - id: publish-to-github
       name: Publish to GitHub PR
       action: publish:github:pull-request
       input:
-        repoUrl: github.com?repo=backstage-test&owner=alxndrchaii
+        repoUrl: github.com?repo=infra-k8s-app-manifest&owner=ajaibid
         branchName: scaffold/${{ parameters.component }}-${{ parameters.environment }}
         title: ${{ parameters.prTitle }}
         description: ${{ parameters.prDescription }}

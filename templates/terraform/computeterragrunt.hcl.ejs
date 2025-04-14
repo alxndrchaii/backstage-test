@@ -30,7 +30,7 @@ include {
     count_compute = <%= instanceCount %> #number ie 2
   
     service_name = "keydb-${include.resource.locals.service_name}"
-    compute_type = "e2-highcpu-2"
+    compute_type = "<%= computeType %>"
     ip_forward   = false
     image_name   = "projects/ajaib-dev-coin/global/images/base-image-keydb-4"
   
