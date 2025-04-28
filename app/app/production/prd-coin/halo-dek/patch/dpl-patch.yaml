@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dpl
+spec:
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+    spec:
+      initContainers:
+        - image: asia-southeast2-docker.pkg.dev/ajaib-nprd-shared-services-0/base-image/newrelic:8.14.0
+          name: download-newrelic-agent
+      containers:
+        - name: dpl
+          envFrom:
+            - configMapRef:
+                name: java-options
+            - secretRef:
+                name: secret-env
+          volumeMounts:
+            - name: application-properties-volume
+              mountPath: /config/application.properties
+              subPath: application.properties
+            - name: logback-spring-volume
+              mountPath: /config/logback-spring.xml
+              subPath: logback-spring.xml
+            - name: secret-properties-volume
+              mountPath: /secret
+          startupProbe:
+            httpGet:
+              path: /api/application/health
+              port: app-port
+            failureThreshold: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+          ports:
+            - name: metrics
+              containerPort: 11111
+          resources:
+            requests:
+              cpu: "3"
+              memory: "2Gi"
+            limits:
+              memory: "2Gi"
+      volumes:
+        - name: application-properties-volume
+          configMap:
+            name: application-properties
+        - name: logback-spring-volume
+          configMap:
+            name: logback-spring
+        - name: secret-properties-volume
+          secret:
+            secretName: secret-properties #pragma: allowlist secret
